@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Which API API</title>
+<style>
+:root{--ink:#232a3a;--ink2:#56627e;--mist:#c9d0dc;--paper:#f6f5f2;--card:#fbfaf8;--line:#dfe3ea;--good:#5e7a6a;--warn:#8c7a55}
+*{box-sizing:border-box;margin:0}
+body{width:1280px;height:640px;overflow:hidden;background:linear-gradient(135deg,#eef0f3 0%,#f6f5f2 45%,#dfe3ea 100%);
+  font-family:"DejaVu Sans","Nunito",system-ui,sans-serif;color:var(--ink);position:relative}
+.grain{position:absolute;inset:0;opacity:.07;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wrap{position:absolute;inset:56px 64px;display:grid;grid-template-columns:1.25fr 1fr;gap:48px;align-items:center}
+h1{font-size:76px;letter-spacing:-.02em;line-height:1.02;font-weight:800}
+h1 span{color:var(--ink2)}
+.lead{margin-top:22px;font-size:27px;line-height:1.35;color:#3a4152;max-width:640px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.chip{padding:9px 16px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:18px;color:var(--ink2);box-shadow:0 6px 16px -10px rgba(35,42,58,.35)}
+.chip b{color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:28px 30px;box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 24px 50px -24px rgba(35,42,58,.45)}
+.card h2{font-size:21px;color:var(--ink2);font-weight:700;margin-bottom:18px;letter-spacing:.01em}
+.row{display:grid;grid-template-columns:150px 1fr 74px;align-items:center;gap:12px;margin:12px 0;font-size:18px}
+.bar{height:16px;border-radius:9px;background:var(--mist);position:relative;overflow:hidden}
+.bar i{position:absolute;left:0;top:0;bottom:0;border-radius:9px;background:var(--ink2)}
+.num{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink);font-weight:700}
+.legend{display:flex;gap:18px;margin-top:16px;font-size:15px;color:var(--ink2)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.check{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);font-size:17px;color:#3a4152;line-height:1.55}
+.ok{color:var(--good);font-weight:700}.al{color:var(--warn);font-weight:700}
+</style></head><body><div class="grain"></div>
+<div class="wrap">
+  <div>
+    <h1>Which<br>API <span>API</span></h1>
+    <p class="lead">Pick the model for each task — tested on <b>your</b> examples, priced at what you <b>really</b> pay.</p>
+    <div class="chips">
+      <span class="chip"><b>10k+</b> offers · resellers too</span>
+      <span class="chip"><b>6</b> benchmark sources</span>
+      <span class="chip">Router: OpenAI · Anthropic · Responses</span>
+      <span class="chip">MCP for agents</span>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Real cost vs list price, 7 days</h2>
+    <div class="row"><span>chat model A</span><div class="bar"><i style="width:44%"></i></div><span class="num">44%</span></div>
+    <div class="row"><span>chat model B</span><div class="bar"><i style="width:47%"></i></div><span class="num">47%</span></div>
+    <div class="row"><span>frontier model</span><div class="bar"><i style="width:9%"></i></div><span class="num">9%</span></div>
+    <div class="row"><span>flash model</span><div class="bar"><i style="width:7%"></i></div><span class="num">7%</span></div>
+    <div class="legend"><span><i style="background:var(--ink2)"></i>paid</span><span><i style="background:var(--mist)"></i>list price</span></div>
+    <div class="check">Integrity: tokenizer <span class="ok">✓ genuine</span> · hidden prompt <span class="al">⚠ 4.4k tokens</span> · cheaper sibling <span class="ok">✓ not swapped</span></div>
+  </div>
+</div></body></html>

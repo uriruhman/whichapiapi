@@ -1,5 +1,7 @@
 # Which API API
 
+![Which API API — pick the model for each task, priced at what you really pay](docs/assets/hero.png)
+
 **Pick the right API for your automation — tested on your own tasks, priced for your real load.**
 
 > Status: v0.3 — evaluator, MCP/REST, offers + benchmarks, non-LLM (search, speech-to-text), automation audit
