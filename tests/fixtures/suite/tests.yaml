@@ -1,0 +1,8 @@
+- description: france
+  vars: {country: France}
+  assert:
+    - type: python
+      value: file://checks.py:has_answer
+      metric: py
+- description: germany
+  vars: {country: Germany}

@@ -1,0 +1,145 @@
+{
+ "id": "wf1",
+ "name": "Synthetic audit test",
+ "nodes": [
+  {
+   "name": "Every 6h",
+   "type": "n8n-nodes-base.scheduleTrigger",
+   "parameters": {
+    "rule": {
+     "interval": [
+      {
+       "field": "hours",
+       "hoursInterval": 6
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "Chain",
+   "type": "@n8n/n8n-nodes-langchain.chainLlm",
+   "parameters": {
+    "needsFallback": true,
+    "promptType": "define",
+    "text": "=Classify this ticket: {{ $json.ticket_text }} from {{ $('Load').item.json.customer }}",
+    "messages": {
+     "messageValues": [
+      {
+       "message": "You are a support triage bot. Answer JSON {\"queue\": ...}."
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "Main model",
+   "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+   "parameters": {
+    "model": "deepseek/deepseek-v4.1-flash",
+    "options": {}
+   }
+  },
+  {
+   "name": "Backup model",
+   "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+   "parameters": {
+    "model": "openai/gpt-6-luna",
+    "options": {}
+   }
+  },
+  {
+   "name": "Lonely model",
+   "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+   "parameters": {
+    "options": {}
+   }
+  },
+  {
+   "name": "Runtime model",
+   "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+   "parameters": {
+    "model": "={{ $vars.model || 'deepseek/deepseek-v4.1-flash' }}"
+   }
+  },
+  {
+   "name": "Embed",
+   "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+   "parameters": {
+    "options": {}
+   }
+  },
+  {
+   "name": "Call OpenAI",
+   "type": "n8n-nodes-base.httpRequest",
+   "retryOnFail": true,
+   "parameters": {
+    "method": "POST",
+    "url": "https://api.openai.com/v1/chat/completions",
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Authorization",
+       "value": "Bearer sk-proj-AbCdEf1234567890abcdef1234"
+      }
+     ]
+    },
+    "jsonBody": "={{ JSON.stringify({ model: 'gpt-4o-mini', messages: [] }) }}"
+   }
+  },
+  {
+   "name": "Transcribe",
+   "type": "n8n-nodes-base.httpRequest",
+   "parameters": {
+    "url": "https://openrouter.ai/api/v1/audio/transcriptions",
+    "bodyParameters": {
+     "parameters": [
+      {
+       "name": "model",
+       "value": "openai/whisper-large-v3"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "Local",
+   "type": "n8n-nodes-base.httpRequest",
+   "parameters": {
+    "url": "http://ollama:11434/api/generate",
+    "jsonBody": "{\"model\": \"qwen3:8b\"}"
+   }
+  },
+  {
+   "name": "Unrelated",
+   "type": "n8n-nodes-base.httpRequest",
+   "parameters": {
+    "url": "https://example.com/jobs"
+   }
+  }
+ ],
+ "connections": {
+  "Main model": {
+   "ai_languageModel": [
+    [
+     {
+      "node": "Chain",
+      "type": "ai_languageModel",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Backup model": {
+   "ai_languageModel": [
+    [
+     {
+      "node": "Chain",
+      "type": "ai_languageModel",
+      "index": 1
+     }
+    ]
+   ]
+  }
+ }
+}

@@ -1,0 +1,67 @@
+{
+ "success": true,
+ "data": [
+  {
+   "model_name": "gpt-6-luna",
+   "vendor_id": 52,
+   "quota_type": 0,
+   "model_ratio": 0.05,
+   "model_price": 0,
+   "completion_ratio": 5,
+   "cache_ratio": 0.1,
+   "enable_groups": [
+    "Group-B3",
+    "Group-B4",
+    "Group-B5",
+    "Group-B6",
+    "Group-A1",
+    "Group-A2",
+    "Group-A3",
+    "Group-C1",
+    "Group-C2"
+   ],
+   "tags": "对话,工具,识图,思考"
+  },
+  {
+   "model_name": "deepseek-v4.1-flash",
+   "vendor_id": 54,
+   "quota_type": 0,
+   "model_ratio": 0.15,
+   "model_price": 0,
+   "completion_ratio": 4,
+   "cache_ratio": 0.02,
+   "enable_groups": [
+    "Group-D1",
+    "Group-D2",
+    "Group-D3"
+   ],
+   "tags": "对话,工具,思考,识图"
+  }
+ ],
+ "group_ratio": {
+  "Group-B3": 0.22,
+  "Group-B4": 0.44,
+  "Group-B5": 0.6,
+  "Group-B6": 0.9,
+  "Group-A1": 0.03677,
+  "Group-A2": 0.05883,
+  "Group-A3": 0.07353,
+  "Group-C1": 0.58824,
+  "Group-C2": 0.7353,
+  "Group-D1": 0.3,
+  "Group-D2": 0.5,
+  "Group-D3": 0.75
+ },
+ "vendors": [
+  {
+   "id": 52,
+   "name": "OpenAI",
+   "icon": "OpenAI"
+  },
+  {
+   "id": 54,
+   "name": "DeepSeek",
+   "icon": "DeepSeek.Color"
+  }
+ ]
+}

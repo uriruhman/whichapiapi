@@ -1,0 +1,8 @@
+- description: weather query
+  vars:
+    query: "current weather forecast Da Nang"
+    expected_keyword: "Da Nang"
+- description: news query
+  vars:
+    query: "latest self-hosting CVE news"
+    expected_keyword: "CVE"

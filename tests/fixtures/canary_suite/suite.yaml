@@ -1,0 +1,16 @@
+description: canary test fixture (mock transport, no judge)
+prompts:
+  - file://prompt.json
+providers:
+  - id: 'mock:const:ok'
+    label: good
+    x-whichapiapi: {current: true, price: {input_per_1m: 1.0, output_per_1m: 2.0}}
+  - id: mock:fail
+    label: broken
+defaultTest:
+  assert:
+    - type: python
+      value: "return {'pass': True, 'score': 1.0}"
+tests: file://tests.yaml
+x-whichapiapi:
+  budget: {run_usd: 1.0}

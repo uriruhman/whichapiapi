@@ -1,0 +1,4 @@
+[
+  {"role": "system", "content": "Answer in JSON."},
+  {"role": "user", "content": "Capital of {{country}}?"}
+]

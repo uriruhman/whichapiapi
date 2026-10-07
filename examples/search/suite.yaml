@@ -1,0 +1,30 @@
+# Phase 3 scaffold: proves search.web runs through the SAME evaluator/selector as llm.chat. Providers are
+# `mock:const:...` (fixed canned "search results") — there is no real search transport yet (needs real
+# provider keys; `suite.live.yaml` is the real one). The taxonomy's real scorer for this
+# capability is `llm-rubric` (relevance grading) — this scaffold uses a deterministic `contains` check
+# instead, so it's fully runnable end-to-end without a configured judge; swap in llm-rubric once a real
+# judge is wired.
+description: "search.web scaffold · deterministic relevance check, mock results"
+
+prompts:
+  - file://prompt.json
+
+providers:
+  - id: 'mock:const:1. Da Nang weather forecast - accuweather.com\n2. CVE-2026-1234 self-hosting advisory - thehackernews.com'
+    label: good
+    x-whichapiapi: {current: true, price: {input_per_1m: 3.0, output_per_1m: 3.0}}
+  - id: 'mock:const:Sorry, no results found.'
+    label: bad
+    x-whichapiapi: {price: {input_per_1m: 1.0, output_per_1m: 1.0}}
+
+defaultTest:
+  assert:
+    - {type: icontains, value: "{{expected_keyword}}", metric: relevance}
+
+tests: file://tests.yaml
+
+x-whichapiapi:
+  capability: search.web
+  contains_pii: false
+  budget: {run_usd: 0.10}
+  min_pass_rate: 0.5

@@ -1,0 +1,29 @@
+# Phase 3 scaffold: proves speech.stt runs through the SAME evaluator/selector as llm.chat, via the new
+# `wer` assertion type (jiwer). Providers are `mock:const:...` (fixed canned transcripts) — there is no real
+# STT transport in this file (`suite.live.yaml` is the real one). Swap in a real
+# provider by pointing `providers[].id` at a real channel once one exists.
+description: "speech.stt scaffold · WER via jiwer, mock transcripts"
+
+prompts:
+  - file://prompt.json
+
+# price is placeholder token-shaped pricing — only used here so the selector has *some* cost signal to compare providers on.
+providers:
+  - id: 'mock:const:the cat sat on the mat'
+    label: good
+    x-whichapiapi: {current: true, price: {input_per_1m: 4.0, output_per_1m: 4.0}}
+  - id: 'mock:const:the cat sit on the mat'
+    label: so-so
+    x-whichapiapi: {price: {input_per_1m: 1.0, output_per_1m: 1.0}}
+
+defaultTest:
+  assert:
+    - {type: wer, value: "{{reference}}", threshold: 0.5, metric: wer}
+
+tests: file://tests.yaml
+
+x-whichapiapi:
+  capability: speech.stt
+  contains_pii: false
+  budget: {run_usd: 0.10}
+  min_pass_rate: 0.5

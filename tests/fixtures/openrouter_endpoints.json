@@ -1,0 +1,127 @@
+{
+ "data": {
+  "id": "deepseek/deepseek-v4.1-flash",
+  "name": "DeepSeek: DeepSeek V4.1 Flash",
+  "created": 1789021285,
+  "description": "DeepSeek V4.1 Flash is a sparse mixture-of-experts model from DeepSeek, and the first built on the company's Causal Encoder-Decoder (CED) architecture. It activates 8B parameters on input and 16B on...",
+  "architecture": {
+   "tokenizer": "DeepSeek",
+   "instruct_type": null,
+   "modality": "text+image->text",
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ]
+  },
+  "endpoints": [
+   {
+    "name": "Relace | deepseek/deepseek-v4.1-flash-20260910",
+    "model_id": "deepseek/deepseek-v4.1-flash",
+    "model_name": "DeepSeek: DeepSeek V4.1 Flash",
+    "context_length": 1048576,
+    "pricing": {
+     "prompt": "0.000000025",
+     "completion": "0.0000006",
+     "input_cache_read": "0.00000001",
+     "discount": 0
+    },
+    "provider_name": "Relace",
+    "tag": "relace",
+    "quantization": "unknown",
+    "max_completion_tokens": 943718,
+    "max_prompt_tokens": null,
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "temperature",
+     "top_p",
+     "top_k",
+     "min_p",
+     "stop",
+     "max_tokens",
+     "logit_bias",
+     "frequency_penalty",
+     "presence_penalty",
+     "repetition_penalty",
+     "tools",
+     "tool_choice",
+     "reasoning_effort"
+    ],
+    "supports_tool_choice": {
+     "none": false,
+     "auto": true,
+     "required": false,
+     "function": false
+    },
+    "status": 0,
+    "uptime_last_30m": 99.97101372895202,
+    "uptime_last_5m": 99.95531724754245,
+    "uptime_last_1d": 99.70605747418115,
+    "supports_implicit_caching": false,
+    "supports_voice_cloning": false,
+    "supports_multiple_audio_references": false,
+    "supports_image_reference": false,
+    "latency_last_30m": null,
+    "throughput_last_30m": null
+   },
+   {
+    "name": "Wafer | deepseek/deepseek-v4.1-flash-20260910",
+    "model_id": "deepseek/deepseek-v4.1-flash",
+    "model_name": "DeepSeek: DeepSeek V4.1 Flash",
+    "context_length": 1048576,
+    "pricing": {
+     "prompt": "0.000000025",
+     "completion": "0.0000006",
+     "input_cache_read": "0.0000000245",
+     "discount": 0
+    },
+    "provider_name": "Wafer",
+    "tag": "wafer",
+    "quantization": "unknown",
+    "max_completion_tokens": 943718,
+    "max_prompt_tokens": null,
+    "supported_parameters": [
+     "reasoning",
+     "include_reasoning",
+     "temperature",
+     "top_p",
+     "top_k",
+     "min_p",
+     "frequency_penalty",
+     "presence_penalty",
+     "repetition_penalty",
+     "stop",
+     "seed",
+     "max_tokens",
+     "logit_bias",
+     "response_format",
+     "structured_outputs",
+     "tools",
+     "tool_choice",
+     "logprobs",
+     "top_logprobs",
+     "reasoning_effort"
+    ],
+    "supports_tool_choice": {
+     "none": true,
+     "auto": true,
+     "required": true,
+     "function": true
+    },
+    "status": 0,
+    "uptime_last_30m": 99.96508205716566,
+    "uptime_last_5m": 99.95558023320378,
+    "uptime_last_1d": 99.81531374129972,
+    "supports_implicit_caching": false,
+    "supports_voice_cloning": false,
+    "supports_multiple_audio_references": false,
+    "supports_image_reference": false,
+    "latency_last_30m": null,
+    "throughput_last_30m": null
+   }
+  ]
+ }
+}

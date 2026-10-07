@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Which API API — роутер</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5f2;--surface:#fbfaf8;--text:#34373d;--muted:#6c717b;--accent:#56627e;--strong:#232a3a;--line:#dfe3ea;--code:#eef0f3;
+  --grad:linear-gradient(135deg,#c9d0dc 0%,#56627e 55%,#232a3a 100%)}
+@media (prefers-color-scheme:dark){:root{--bg:#16181b;--surface:#1f2328;--text:#e6e8ec;--muted:#a9aeb8;--accent:#8e9ab2;--strong:#e8ecf3;--line:#2c3139;--code:#1c1f24}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 Nunito,system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:40px 16px 64px}
+h1{font:600 clamp(28px,5vw,40px)/1.15 Comfortaa,system-ui,sans-serif;margin:0 0 8px;color:var(--strong)}
+.ribbon{height:6px;border-radius:999px;background:var(--grad);margin:0 0 28px;max-width:180px}
+h2{font:600 20px/1.3 Comfortaa,system-ui,sans-serif;margin:36px 0 12px;color:var(--strong)}
+p,li{color:var(--text)} .muted{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px 20px;margin:12px 0}
+code{background:var(--code);border-radius:6px;padding:1px 6px;font:14px ui-monospace,SFMono-Regular,Menlo,monospace}
+pre{background:var(--code);border-radius:14px;padding:14px 16px;overflow-x:auto;font:13.5px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;margin:8px 0}
+pre code{background:none;padding:0}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td,th{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin:2px 4px 2px 0;font-size:14px}
+</style>
+</head>
+<body>
+<main>
+<h1>Which API API</h1>
+<div class="ribbon"></div>
+<p>Обычный OpenAI-совместимый API, который сам выбирает модель под каждый запрос: по бенчмаркам нужной задачи и цене
+задачи с учётом «думания». Если модель не ответила, запрос уходит к запасной модели другого разработчика.</p>
+
+<h2>Подключение</h2>
+<div class="card">
+<table>
+<tr><th>Адрес (base URL)</th><td><code>https://__HOST__/v1</code> или просто <code>https://__HOST__</code></td></tr>
+<tr><th>Ключ</th><td><code>Authorization: Bearer wa-…</code> — личный ключ выдаёт владелец</td></tr>
+<tr><th>Модель</th><td><code>auto</code> — задача определяется по запросу</td></tr>
+</table>
+</div>
+
+<h2>Codex / Claude Code: подключить как MCP (для тестировщиков)</h2>
+<p>Скопируйте это в Codex, вставив свой ключ вместо <code>wa-…</code>:</p>
+<pre><code>Подключи MCP-сервер Which API API. Добавь в ~/.codex/config.toml:
+
+[mcp_servers.whichapiapi]
+url = "https://__HOST__/mcp"
+http_headers = { "Authorization" = "Bearer wa-…" }
+
+Потом напомни мне перезапустить Codex. Когда выбираешь модель или API под задачу,
+сначала спрашивай whichapiapi (suggest_candidates с with_scores). Если что-то
+сломано, непонятно или не хватает — вызывай его report_feedback.</code></pre>
+<p class="muted">Claude Code: <code>claude mcp add --transport http whichapiapi https://__HOST__/mcp --header "Authorization: Bearer wa-…"</code></p>
+<p class="muted">Инструменты: suggest_candidates, rank_models, find_offers, compare_prices, estimate_cost, model_benchmarks,
+benchmark_boards, audit_n8n, route_chat, my_usage, report_feedback.</p>
+
+<h2>Python (openai)</h2>
+<pre><code>from openai import OpenAI
+
+client = OpenAI(base_url="https://__HOST__/v1", api_key="wa-…")
+r = client.chat.completions.create(
+    model="auto",
+    messages=[{"role": "user", "content": "Объясни, что такое трейсы"}],
+)
+print(r.choices[0].message.content)</code></pre>
+
+<h2>curl</h2>
+<pre><code>curl https://__HOST__/v1/chat/completions \
+  -H "Authorization: Bearer wa-…" -H "Content-Type: application/json" \
+  -d '{"model":"auto:coding","messages":[{"role":"user","content":"Напиши FizzBuzz на Rust"}]}'</code></pre>
+<p class="muted">Работает и в любых клиентах с «OpenAI-compatible» провайдером (Cline, Continue, Open WebUI, n8n, LibreChat):
+укажите base URL и ключ, модель — <code>auto</code>.</p>
+
+<h2>Как выбрать поведение</h2>
+<div class="card">
+<p><code>auto</code> · <code>auto:&lt;задача&gt;</code> · <code>auto:&lt;задача&gt;@&lt;пресет&gt;</code></p>
+<p>Задачи:
+<span class="pill">general</span><span class="pill">coding</span><span class="pill">math</span><span class="pill">agents</span><span class="pill">russian</span><span class="pill">writing</span><span class="pill">long_context</span><span class="pill">vision</span></p>
+<p>Пресеты: <span class="pill">optimal</span> баланс (по умолчанию) · <span class="pill">best</span> качество · <span class="pill">value</span> дёшево ·
+<span class="pill">fast</span> быстро</p>
+<p class="muted">Пример: <code>auto:coding@best</code>. Потоковый режим (<code>"stream": true</code>) поддерживается.</p>
+</div>
+
+<h2>Что приходит в ответ</h2>
+<div class="card">
+<table>
+<tr><th>x-whichapiapi-route</th><td>какая модель ответила, например <code>openrouter:deepseek/deepseek-v4.1-flash</code></td></tr>
+<tr><th>x-whichapiapi-task</th><td>как был распознан запрос</td></tr>
+<tr><th>x-whichapiapi-tried</th><td>какие модели пробовали по порядку (запасные)</td></tr>
+<tr><th>x-whichapiapi-cost-usd</th><td>сколько стоил этот запрос</td></tr>
+</table>
+</div>
+
+<h2>Лимиты</h2>
+<ul>
+<li>У каждого ключа свой лимит в долларах. Остаток: <code>GET https://__HOST__/v1/usage</code>. На лимите — ошибка 402.</li>
+<li>Ответ до 4096 токенов, до 20 запросов в минуту (ошибка 429).</li>
+<li>Если общий баланс проекта на исходе, гостевые запросы временно ставятся на паузу (ошибка 503).</li>
+<li><b>Ключ тестировщика пишет полные трейсы</b>: тексты запросов и ответов, вызовы инструментов с аргументами —
+это видит владелец проекта, чтобы чинить и улучшать. Не отправляйте секреты и личные данные.</li>
+<li>Инструменты MCP бесплатны; деньги с лимита тратит только сам чат (<code>route_chat</code> и <code>/chat/completions</code>).</li>
+</ul>
+</main>
+</body>
+</html>

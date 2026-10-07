@@ -1,0 +1,1144 @@
+<title>Подбор модели</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@600&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --slate-900: #232a3a;
+  --slate-600: #56627e;
+  --slate-300: #c9d0dc;
+  --bg: #f6f5f2;
+  --bg-soft: #eef0f3;
+  --surface: #fbfaf8;
+  --text: #34373d;
+  --text-muted: #6c717b;
+  --accent: var(--slate-600);
+  --accent-strong: var(--slate-900);
+  --line: #dfe3ea;
+  --success: #5e7a6a;
+  --danger: #8a5a52;
+  --warning: #8c7a55;
+  --grad-ribbon: linear-gradient(135deg, var(--slate-300) 0%, var(--slate-600) 55%, var(--slate-900) 100%);
+  --grad-text: linear-gradient(100deg, #34373d 0%, #6c717b 100%);
+  --grad-section: linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+  --radius-card: 24px;
+  --radius-input: 12px;
+  --radius-pill: 999px;
+  --shadow-soft: 0 10px 30px -12px rgba(35, 42, 58, .25);
+  --shadow-layer: 0 1px 0 rgba(255, 255, 255, .7) inset, 0 12px 28px -16px rgba(35, 42, 58, .3);
+  --font-body: "Nunito", system-ui, sans-serif;
+  --font-display: "Comfortaa", system-ui, sans-serif;
+  --ease-flow: cubic-bezier(.22, .61, .36, 1);
+  --dur: 550ms;
+  --grain-opacity: .06;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --slate-900: #4a5570;
+    --slate-600: #8e9ab2;
+    --slate-300: #e8ecf3;
+    --bg: #16181b;
+    --bg-soft: #1c1f24;
+    --surface: #1f2328;
+    --text: #e6e8ec;
+    --text-muted: #a9aeb8;
+    --accent: #8e9ab2;
+    --accent-strong: #e8ecf3;
+    --line: #2c3139;
+    --grad-text: linear-gradient(100deg, #e6e8ec 0%, #a9aeb8 100%);
+    --shadow-soft: 0 10px 30px -12px rgba(0, 0, 0, .6);
+    --shadow-layer: 0 1px 0 rgba(255, 255, 255, .05) inset, 0 12px 28px -16px rgba(0, 0, 0, .7);
+    --grain-opacity: .05;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --slate-900: #4a5570;
+  --slate-600: #8e9ab2;
+  --slate-300: #e8ecf3;
+  --bg: #16181b;
+  --bg-soft: #1c1f24;
+  --surface: #1f2328;
+  --text: #e6e8ec;
+  --text-muted: #a9aeb8;
+  --accent: #8e9ab2;
+  --accent-strong: #e8ecf3;
+  --line: #2c3139;
+  --grad-text: linear-gradient(100deg, #e6e8ec 0%, #a9aeb8 100%);
+  --shadow-soft: 0 10px 30px -12px rgba(0, 0, 0, .6);
+  --shadow-layer: 0 1px 0 rgba(255, 255, 255, .05) inset, 0 12px 28px -16px rgba(0, 0, 0, .7);
+  --grain-opacity: .05;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur: 0ms; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.app-container {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 24px 16px 80px;
+  box-sizing: border-box;
+}
+.grain { position: relative; isolation: isolate; }
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+:root[data-theme="dark"] .grain::after { mix-blend-mode: screen; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .grain::after { mix-blend-mode: screen; }
+}
+.header {
+  padding: 24px 20px 20px;
+  border-radius: var(--radius-card);
+  margin-bottom: 24px;
+}
+.header h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  margin: 0 0 8px;
+  letter-spacing: 0.01em;
+  color: var(--accent-strong);
+}
+.header .subtitle {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  margin: 0 0 6px;
+}
+.header .data-date {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+.presets-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.preset-btn {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px -2px rgba(35,42,58,0.08);
+  transition: all var(--dur) var(--ease-flow);
+}
+.preset-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.preset-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+:root[data-theme="dark"] .preset-btn.active {
+  color: #16181b;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-layer);
+  padding: 24px;
+  margin-bottom: 28px;
+  transition: box-shadow var(--dur) var(--ease-flow);
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+select, input[type="number"], input[type="text"] {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  border-radius: var(--radius-input);
+  padding: 9px 12px;
+  outline: none;
+  transition: border-color var(--dur) var(--ease-flow);
+}
+select:focus, input:focus {
+  border-color: var(--accent);
+}
+.sliders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin: 16px 0;
+}
+.slider-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.slider-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+.slider-meta span.pct {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+input[type="range"] {
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  align-items: center;
+}
+.toggle-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 18px;
+}
+.toggle-cell input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+.hero-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-layer);
+  padding: 28px;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.hero-title-box h2 {
+  margin: 4px 0 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+.hero-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--bg-soft);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+}
+.hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 16px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.metric-item {
+  display: flex;
+  flex-direction: column;
+}
+.metric-val {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.metric-lbl {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+.hero-runner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+.hero-runner strong {
+  color: var(--text);
+}
+.open-ring-box {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  flex-shrink: 0;
+}
+.open-ring-box svg {
+  transform: rotate(-90deg);
+}
+.ring-val {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.table-container {
+  overflow-x: auto;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-layer);
+  margin-bottom: 32px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+}
+th {
+  background: var(--bg-soft);
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+  vertical-align: middle;
+}
+tr:last-child td {
+  border-bottom: none;
+}
+.creator-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: block;
+}
+.score-bar-bg {
+  width: 70px;
+  height: 6px;
+  background: var(--line);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+.score-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: var(--radius-pill);
+}
+.tag-popular {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+.tag-imputed {
+  font-size: 0.72rem;
+  color: var(--warning);
+  font-weight: 600;
+}
+.chart-box {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-layer);
+  padding: 24px;
+  margin-bottom: 32px;
+}
+.chart-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 16px;
+}
+.chart-svg-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+.media-section {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-layer);
+  padding: 24px;
+  margin-bottom: 32px;
+}
+.tabs-nav {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+.tab-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--dur) var(--ease-flow);
+}
+.tab-btn.active {
+  background: var(--bg-soft);
+  color: var(--accent-strong);
+}
+.media-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+.media-item {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-input);
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.media-item .m-name {
+  font-weight: 600;
+  font-size: 0.88rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+.media-item .m-org {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+.media-item .m-score {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.footer-box {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+.footer-box h3 {
+  margin: 0 0 12px;
+  color: var(--text);
+  font-size: 1rem;
+}
+.footer-box ul {
+  margin: 0 0 16px;
+  padding-left: 20px;
+}
+.footer-box li {
+  margin-bottom: 6px;
+}
+.footer-box a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+</style>
+
+<div class="app-container">
+  <header class="header grain">
+    <h1>Подбор модели</h1>
+    <div class="subtitle">Качество под задачу, цена задачи с учётом «думания», скорость</div>
+    <div class="data-date" id="data-date">Обновлено: …</div>
+  </header>
+
+  <div class="presets-wrap" id="presets-row"></div>
+
+  <section class="card">
+    <div class="grid-2">
+      <div class="form-group">
+        <label for="task-select">Задача</label>
+        <select id="task-select"></select>
+      </div>
+      <div class="form-group">
+        <label for="profile-select">Типичный запрос (токены)</label>
+        <select id="profile-select"></select>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-bottom: 8px;">
+      <div class="form-group">
+        <label for="tokens-in">Входные токены</label>
+        <input type="number" id="tokens-in" min="1" step="50" value="1500">
+      </div>
+      <div class="form-group">
+        <label for="tokens-out">Токены ответа</label>
+        <input type="number" id="tokens-out" min="1" step="20" value="400">
+      </div>
+    </div>
+
+    <div class="sliders-grid">
+      <div class="slider-cell">
+        <div class="slider-meta">
+          <span>Качество</span>
+          <span class="pct" id="wq-pct">55%</span>
+        </div>
+        <input type="range" id="wq" min="0" max="100" value="55">
+      </div>
+      <div class="slider-cell">
+        <div class="slider-meta">
+          <span>Цена</span>
+          <span class="pct" id="wc-pct">30%</span>
+        </div>
+        <input type="range" id="wc" min="0" max="100" value="30">
+      </div>
+      <div class="slider-cell">
+        <div class="slider-meta">
+          <span>Скорость</span>
+          <span class="pct" id="ws-pct">15%</span>
+        </div>
+        <input type="range" id="ws" min="0" max="100" value="15">
+      </div>
+    </div>
+
+    <div class="filters-grid">
+      <div class="form-group">
+        <label for="filter-min-q">Мин. качество: <span id="min-q-val">0</span></label>
+        <input type="range" id="filter-min-q" min="0" max="100" value="0">
+      </div>
+      <div class="form-group">
+        <label for="filter-tps">Мин. ток/с</label>
+        <select id="filter-tps">
+          <option value="0">Любая</option>
+          <option value="50">50</option>
+          <option value="150">150</option>
+          <option value="400">400</option>
+          <option value="800">800</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="filter-cost">Макс. $/1000 задач</label>
+        <input type="number" id="filter-cost" placeholder="Без лимита" min="0" step="0.5">
+      </div>
+      <label class="toggle-cell">
+        <input type="checkbox" id="filter-vision"> Нужно зрение
+      </label>
+      <label class="toggle-cell">
+        <input type="checkbox" id="filter-open"> Только открытые веса
+      </label>
+    </div>
+  </section>
+
+  <section class="hero-card" id="hero-card">
+    <div class="hero-top">
+      <div class="hero-title-box">
+        <div class="hero-badge">Лучший выбор</div>
+        <h2 id="hero-name">—</h2>
+        <div style="font-size:0.85rem; color:var(--text-muted);" id="hero-creator">—</div>
+      </div>
+      <div class="open-ring-box" id="hero-ring"></div>
+    </div>
+    <div class="hero-metrics">
+      <div class="metric-item">
+        <span class="metric-val" id="hero-q">—</span>
+        <span class="metric-lbl">Качество</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-val" id="hero-cost">—</span>
+        <span class="metric-lbl">$/1000 задач</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-val" id="hero-sec">—</span>
+        <span class="metric-lbl">Секунд / задача</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-val" id="hero-think">—</span>
+        <span class="metric-lbl">«Мысли» токены</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-val" id="hero-buy" style="font-size:1rem; word-break:break-all;">—</span>
+        <span class="metric-lbl">Где купить</span>
+      </div>
+    </div>
+    <div class="hero-runner" id="hero-runner">
+      <span>Запасной вариант (другой разработчик):</span> <strong id="runner-name">—</strong> · <span id="runner-creator">—</span> · <span id="runner-score">—</span>
+    </div>
+  </section>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Модель</th>
+          <th>Счёт</th>
+          <th>Качество</th>
+          <th>$/1k задач</th>
+          <th>с/задача</th>
+          <th>ток/с</th>
+          <th>Мышление</th>
+          <th>Купить</th>
+        </tr>
+      </thead>
+      <tbody id="results-tbody"></tbody>
+    </table>
+  </div>
+
+  <section class="chart-box">
+    <h3 class="chart-title">Карта моделей: Качество vs Стоимость (log-scale)</h3>
+    <div class="chart-svg-wrap">
+      <svg id="scatter-plot" width="800" height="360" viewBox="0 0 800 360" style="display:block; max-width:100%; height:auto;"></svg>
+    </div>
+  </section>
+
+  <section class="media-section">
+    <div class="tabs-nav" id="media-tabs"></div>
+    <div class="media-list" id="media-list"></div>
+  </section>
+
+  <footer class="footer-box">
+    <h3>Как это считается</h3>
+    <ul>
+      <li><strong>Качество:</strong> процентили бенчмарков, сбалансированные под выбранную задачу и стянутые к медиане (50) при неполном покрытии тестами.</li>
+      <li><strong>Цена задачи:</strong> входные токены × цена входа + (мышление + выходные токены) × цена выхода.</li>
+      <li><strong>Мышление:</strong> замеренное время до первого токена ответа × скорость (оценка, ограниченная тестом AA) или заимствованное значение у близких вариантов.</li>
+      <li><strong>Источники данных:</strong> бенчмарки и скорость от <a href="https://artificialanalysis.ai/" target="_blank" rel="noopener">Artificial Analysis</a>, арена LMArena, SWE-bench, BFCL и Open ASR.</li>
+    </ul>
+    <div id="sources-attribution" style="font-size:0.78rem; opacity:0.8; margin-top:8px;"></div>
+  </footer>
+</div>
+
+<script id="model-data" type="application/json">/*__MODEL_DATA__*/</script>
+
+<script>
+(function() {
+  const TASK_NAMES = {
+    general: "Общие задачи",
+    coding: "Код",
+    math: "Математика",
+    agents: "Агенты и инструменты",
+    russian: "Русский язык",
+    writing: "Тексты",
+    long_context: "Длинные документы",
+    vision: "Зрение"
+  };
+
+  const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (ch) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[ch]));
+  const rawJson = document.getElementById("model-data").textContent.trim();
+  let DATA = {};
+  try {
+    DATA = JSON.parse(rawJson);
+  } catch (e) {
+    DATA = { cards: [], tasks: {}, profiles: {}, presets: {}, media: {}, stt_prices: [], attribution: [] };
+  }
+
+  // Port of selector.cards.quality: missing task boards are filled with the general quality, pulled toward 50.
+  function blendOf(card, blend) {
+    const qObj = card.q || {};
+    let haveSum = 0, blendSum = 0, weightedRaw = 0;
+    for (const k of Object.keys(blend)) {
+      blendSum += blend[k];
+      if (qObj[k] !== undefined && qObj[k] !== null) { haveSum += blend[k]; weightedRaw += qObj[k] * blend[k]; }
+    }
+    return [haveSum ? weightedRaw / haveSum : null, blendSum ? haveSum / blendSum : 0];
+  }
+
+  function quality(card, task) {
+    const tasks = DATA.tasks || {};
+    const blend = tasks[task] || {};
+    if (!Object.keys(blend).length) return [null, 0.0];
+    const [raw, cover] = blendOf(card, blend);
+    const [graw, gcover] = task !== "general" && tasks.general ? blendOf(card, tasks.general) : [null, 0];
+    if (raw === null && graw === null) return [null, 0.0];
+    const general = graw !== null ? gcover * graw + (1 - gcover) * 50 : 50;
+    const fill = 50 + 0.75 * (general - 50);
+    const q = (raw !== null ? cover * raw : 0) + (1 - cover) * fill;
+    const eff = cover + (1 - cover) * 0.5 * gcover;
+    return [Math.round(q * 10) / 10, Math.round(eff * 100) / 100];
+  }
+
+  function task_cost(card, in_tokens, out_tokens, use_buy_price = true) {
+    let pin = card.price_in || 0;
+    let pout = card.price_out || 0;
+    const buy = card.buy || {};
+    if (use_buy_price && buy.input_per_1m !== undefined && buy.output_per_1m !== undefined && buy.input_per_1m !== null) {
+      pin = Math.min(pin, buy.input_per_1m);
+      pout = Math.min(pout, buy.output_per_1m);
+    }
+    const think = card.think || 0;
+    return (in_tokens * pin + (think + out_tokens) * pout) / 1e6;
+  }
+
+  function task_seconds(card, out_tokens) {
+    if (!card.tps) return null;
+    const tt = (card.ttfa !== null && card.ttfa !== undefined) ? card.ttfa : (card.ttft || 0.0);
+    return tt + out_tokens / card.tps;
+  }
+
+  function _log_scale(values, lower_is_better) {
+    const pos = {};
+    for (let k in values) {
+      if (values[k] && values[k] > 0) pos[k] = values[k];
+    }
+    const keys = Object.keys(pos);
+    if (!keys.length) return {};
+    let minVal = Infinity, maxVal = -Infinity;
+    for (let k of keys) {
+      const v = pos[k];
+      if (v < minVal) minVal = v;
+      if (v > maxVal) maxVal = v;
+    }
+    const lo = Math.log(minVal);
+    const hi = Math.log(maxVal);
+    const span = (hi - lo) || 1.0;
+    const out = {};
+    for (let k of keys) {
+      const lv = Math.log(pos[k]);
+      out[k] = lower_is_better ? (hi - lv) / span : (lv - lo) / span;
+    }
+    return out;
+  }
+
+  function rankCards(cards, task = "general", weights = [0.55, 0.3, 0.15], profile = [1500, 400], filters = {}) {
+    const min_quality = filters.min_quality;
+    const min_tps = filters.min_tps;
+    const max_ttfa = filters.max_ttfa;
+    const max_cost = filters.max_cost;
+    const vision = filters.vision;
+    const open_only = filters.open_only;
+    const min_coverage = filters.min_coverage !== undefined ? filters.min_coverage : 0.3;
+    const limit = filters.limit || 25;
+
+    const rows = [];
+    for (let c of cards) {
+      const [q, cover] = quality(c, task);
+      if (q === null || cover < min_coverage) continue;
+      const cost = task_cost(c, profile[0], profile[1]);
+      const secs = task_seconds(c, profile[1]);
+      if (min_quality !== undefined && min_quality !== null && q < min_quality) continue;
+      if (min_tps && (c.tps || 0) < min_tps) continue;
+      if (max_ttfa && (c.ttfa === null || c.ttfa === undefined || c.ttfa > max_ttfa)) continue;
+      if (max_cost && cost > max_cost) continue;
+      if (vision && !c.vision) continue;
+      if (open_only && !c.open) continue;
+      rows.push({ card: c, quality: q, coverage: cover, cost: cost, seconds: secs });
+    }
+
+    const costMap = {}, secMap = {};
+    for (let r of rows) {
+      costMap[r.card.id] = r.cost;
+      if (r.seconds) secMap[r.card.id] = r.seconds;
+    }
+    const cheap = _log_scale(costMap, true);
+    const fast = _log_scale(secMap, true);
+
+    const [wq, wc, ws] = weights;
+    const total = (wq + wc + ws) || 1.0;
+    for (let r of rows) {
+      const cid = r.card.id;
+      const ch = cheap[cid] || 0.0;
+      const fs = fast[cid] || 0.0;
+      r.score = Math.round(100 * (wq * r.quality / 100 + wc * ch + ws * fs) / total * 10) / 10;
+    }
+    rows.sort((a, b) => b.score - a.score);
+    return rows.slice(0, limit);
+  }
+
+  // DOM Elements
+  const taskSel = document.getElementById("task-select");
+  const profSel = document.getElementById("profile-select");
+  const inTokInput = document.getElementById("tokens-in");
+  const outTokInput = document.getElementById("tokens-out");
+  const wqRange = document.getElementById("wq");
+  const wcRange = document.getElementById("wc");
+  const wsRange = document.getElementById("ws");
+  const wqPct = document.getElementById("wq-pct");
+  const wcPct = document.getElementById("wc-pct");
+  const wsPct = document.getElementById("ws-pct");
+  const minQRange = document.getElementById("filter-min-q");
+  const minQVal = document.getElementById("min-q-val");
+  const tpsSel = document.getElementById("filter-tps");
+  const costMaxInput = document.getElementById("filter-cost");
+  const visCheck = document.getElementById("filter-vision");
+  const openCheck = document.getElementById("filter-open");
+
+  if (DATA.generated_at) {
+    const d = new Date(DATA.generated_at);
+    document.getElementById("data-date").textContent = "Данные от: " + d.toLocaleString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
+  }
+
+  for (let k in (DATA.tasks || {})) {
+    const opt = document.createElement("option");
+    opt.value = k;
+    opt.textContent = (TASK_NAMES[k] ? TASK_NAMES[k] + " (" + k + ")" : k);
+    taskSel.appendChild(opt);
+  }
+
+  for (let k in (DATA.profiles || {})) {
+    const opt = document.createElement("option");
+    opt.value = k;
+    const p = DATA.profiles[k];
+    opt.textContent = k + " (" + p[0] + " → " + p[1] + " токенов)";
+    profSel.appendChild(opt);
+  }
+
+  const pRow = document.getElementById("presets-row");
+  for (let pk in (DATA.presets || {})) {
+    const p = DATA.presets[pk];
+    const btn = document.createElement("button");
+    btn.className = "preset-btn" + (pk === "optimal" ? " active" : "");
+    btn.textContent = p.title || pk;
+    btn.dataset.preset = pk;
+    btn.onclick = () => applyPreset(pk);
+    pRow.appendChild(btn);
+  }
+
+  function applyPreset(key) {
+    const p = (DATA.presets || {})[key];
+    if (!p) return;
+    document.querySelectorAll(".preset-btn").forEach(b => b.classList.toggle("active", b.dataset.preset === key));
+    if (p.task) taskSel.value = p.task;
+    const prKey = p.profile || "chat";
+    if (DATA.profiles && DATA.profiles[prKey]) {
+      profSel.value = prKey;
+      inTokInput.value = DATA.profiles[prKey][0];
+      outTokInput.value = DATA.profiles[prKey][1];
+    }
+    if (p.w) {
+      wqRange.value = Math.round(p.w[0] * 100);
+      wcRange.value = Math.round(p.w[1] * 100);
+      wsRange.value = Math.round(p.w[2] * 100);
+    }
+    minQRange.value = p.min_quality || 0;
+    minQVal.textContent = minQRange.value;
+    tpsSel.value = p.min_tps || 0;
+    costMaxInput.value = p.max_cost ? (p.max_cost * 1000).toFixed(2) : "";
+    visCheck.checked = !!p.vision;
+    openCheck.checked = !!p.open_only;
+    update();
+  }
+
+  profSel.onchange = () => {
+    const p = (DATA.profiles || {})[profSel.value];
+    if (p) {
+      inTokInput.value = p[0];
+      outTokInput.value = p[1];
+    }
+    update();
+  };
+
+  function updateWeightsPct() {
+    const q = parseFloat(wqRange.value) || 0;
+    const c = parseFloat(wcRange.value) || 0;
+    const s = parseFloat(wsRange.value) || 0;
+    const sum = (q + c + s) || 1;
+    wqPct.textContent = Math.round((q / sum) * 100) + "%";
+    wcPct.textContent = Math.round((c / sum) * 100) + "%";
+    wsPct.textContent = Math.round((s / sum) * 100) + "%";
+  }
+
+  [wqRange, wcRange, wsRange].forEach(el => el.oninput = () => { updateWeightsPct(); update(); });
+  minQRange.oninput = () => { minQVal.textContent = minQRange.value; update(); };
+  [taskSel, inTokInput, outTokInput, tpsSel, costMaxInput, visCheck, openCheck].forEach(el => el.onchange = update);
+
+  function makeRingSvg(score) {
+    const radius = 30;
+    const circ = 2 * Math.PI * radius;
+    const gap = circ * 0.2;
+    const strokeDash = circ - gap;
+    const fillDash = (score / 100) * strokeDash;
+    return `<svg width="76" height="76" viewBox="0 0 76 76">
+      <circle cx="38" cy="38" r="${radius}" fill="none" stroke="var(--line)" stroke-width="6" stroke-dasharray="${strokeDash} ${gap}" stroke-linecap="round"/>
+      <circle cx="38" cy="38" r="${radius}" fill="none" stroke="var(--accent)" stroke-width="6" stroke-dasharray="${fillDash} ${circ}" stroke-linecap="round"/>
+    </svg><div class="ring-val">${score}</div>`;
+  }
+
+  function update() {
+    updateWeightsPct();
+    const task = taskSel.value || "general";
+    const inTokens = parseInt(inTokInput.value, 10) || 1500;
+    const outTokens = parseInt(outTokInput.value, 10) || 400;
+    const w = [parseFloat(wqRange.value) || 0, parseFloat(wcRange.value) || 0, parseFloat(wsRange.value) || 0];
+    const maxCostPerTask = costMaxInput.value ? parseFloat(costMaxInput.value) / 1000 : null;
+
+    const filters = {
+      min_quality: parseFloat(minQRange.value) || 0,
+      min_tps: parseFloat(tpsSel.value) || null,
+      max_cost: maxCostPerTask,
+      vision: visCheck.checked,
+      open_only: openCheck.checked,
+      limit: 25
+    };
+
+    const ranked = rankCards(DATA.cards || [], task, w, [inTokens, outTokens], filters);
+
+    // Hero Pick
+    if (ranked.length > 0) {
+      const top = ranked[0];
+      document.getElementById("hero-name").textContent = top.card.name;
+      document.getElementById("hero-creator").textContent = top.card.creator || "—";
+      document.getElementById("hero-ring").innerHTML = makeRingSvg(top.score);
+      document.getElementById("hero-q").textContent = top.quality.toFixed(1);
+      document.getElementById("hero-cost").textContent = "$" + (top.cost * 1000).toFixed(3);
+      document.getElementById("hero-sec").textContent = top.seconds ? top.seconds.toFixed(2) + " с" : "—";
+      const thSource = top.card.think_source === "imputed" ? " ≈ оценка" : "";
+      document.getElementById("hero-think").textContent = (top.card.think !== undefined && top.card.think !== null) ? top.card.think.toLocaleString() + thSource : "0";
+      const buyOffer = (top.card.buy && top.card.buy.offer_id) ? top.card.buy.offer_id : "—";
+      document.getElementById("hero-buy").textContent = buyOffer;
+
+      // Runner up from different creator
+      const runner = ranked.find(r => r.card.creator && r.card.creator !== top.card.creator);
+      const runnerBox = document.getElementById("hero-runner");
+      if (runner) {
+        runnerBox.style.display = "flex";
+        document.getElementById("runner-name").textContent = runner.card.name;
+        document.getElementById("runner-creator").textContent = runner.card.creator;
+        document.getElementById("runner-score").textContent = runner.score + " баллов";
+      } else {
+        runnerBox.style.display = "none";
+      }
+    } else {
+      document.getElementById("hero-name").textContent = "Нет подходящих моделей";
+      document.getElementById("hero-creator").textContent = "Попробуйте смягчить фильтры";
+      document.getElementById("hero-ring").innerHTML = "";
+      document.getElementById("hero-q").textContent = "—";
+      document.getElementById("hero-cost").textContent = "—";
+      document.getElementById("hero-sec").textContent = "—";
+      document.getElementById("hero-think").textContent = "—";
+      document.getElementById("hero-buy").textContent = "—";
+      document.getElementById("hero-runner").style.display = "none";
+    }
+
+    // Results Table
+    const tbody = document.getElementById("results-tbody");
+    tbody.innerHTML = "";
+    ranked.forEach((r, idx) => {
+      const tr = document.createElement("tr");
+      const covPct = r.coverage < 1.0 ? ` <span style="font-size:0.75rem; color:var(--text-muted);">(${Math.round(r.coverage * 100)}%)</span>` : "";
+      const thTag = r.card.think_source === "imputed" ? `<br><span class="tag-imputed">≈ оценка</span>` : "";
+      const buyText = (r.card.buy && r.card.buy.offer_id) ? r.card.buy.offer_id : "—";
+      const pop = Object.entries(r.card.popular || {}).sort((x, y) => x[1] - y[1]).slice(0, 2);
+      const popTag = pop.length ? `<span class="tag-popular" title="Место по использованию на OpenRouter">топ OpenRouter: ${pop.map(([k, v]) => esc(k) + " #" + esc(v)).join(", ")}</span>` : "";
+      tr.innerHTML = `
+        <td style="font-weight:700; color:var(--text-muted);">${idx + 1}</td>
+        <td><strong>${esc(r.card.name)}</strong><span class="creator-sub">${esc(r.card.creator || "—")}</span>${popTag}</td>
+        <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:${r.score}%;"></div></div><strong>${r.score}</strong></td>
+        <td>${r.quality.toFixed(1)}${covPct}</td>
+        <td>$${(r.cost * 1000).toFixed(3)}</td>
+        <td>${r.seconds ? r.seconds.toFixed(2) + "с" : "—"}</td>
+        <td>${r.card.tps ? Math.round(r.card.tps) : "—"}</td>
+        <td>${(r.card.think || 0).toLocaleString()}${thTag}</td>
+        <td style="font-size:0.8rem; word-break:break-all;">${esc(buyText)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    renderScatter(ranked, inTokens, outTokens, task);
+  }
+
+  function renderScatter(topRanked, inTokens, outTokens, task) {
+    const svg = document.getElementById("scatter-plot");
+    const W = 800, H = 360, padL = 60, padR = 30, padT = 30, padB = 40;
+    const all = [];
+    (DATA.cards || []).forEach(c => {
+      const [q, cov] = quality(c, task);
+      if (q === null) return;
+      const cost1k = task_cost(c, inTokens, outTokens) * 1000;
+      if (cost1k > 0) all.push({ card: c, q: q, cost1k: cost1k });
+    });
+
+    if (all.length === 0) {
+      svg.innerHTML = '<text x="400" y="180" text-anchor="middle" fill="var(--text-muted)">Нет данных</text>';
+      return;
+    }
+
+    let minCost = Infinity, maxCost = -Infinity;
+    all.forEach(d => {
+      if (d.cost1k < minCost) minCost = d.cost1k;
+      if (d.cost1k > maxCost) maxCost = d.cost1k;
+    });
+    if (minCost === maxCost) { minCost *= 0.5; maxCost *= 1.5; }
+    const logMin = Math.log10(minCost);
+    const logMax = Math.log10(maxCost);
+
+    const xMap = v => padL + ((Math.log10(v) - logMin) / (logMax - logMin || 1)) * (W - padL - padR);
+    const yMap = v => H - padB - ((v / 100) * (H - padT - padB));
+
+    const top10Ids = new Set(topRanked.slice(0, 10).map(r => r.card.id));
+
+    let html = `
+      <line x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}" stroke="var(--line)" stroke-width="1"/>
+      <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}" stroke="var(--line)" stroke-width="1"/>
+    `;
+
+    // Y grid & labels
+    [0, 25, 50, 75, 100].forEach(yVal => {
+      const y = yMap(yVal);
+      html += `
+        <line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="var(--line)" stroke-dasharray="3,3" opacity="0.6"/>
+        <text x="${padL - 10}" y="${y + 4}" text-anchor="end" font-size="11" fill="var(--text-muted)" font-family="var(--font-body)">${yVal}</text>
+      `;
+    });
+
+    // X ticks
+    const steps = 4;
+    for (let i = 0; i <= steps; i++) {
+      const lVal = logMin + (i / steps) * (logMax - logMin);
+      const realVal = Math.pow(10, lVal);
+      const x = xMap(realVal);
+      html += `
+        <line x1="${x}" y1="${H - padB}" x2="${x}" y2="${H - padB + 5}" stroke="var(--line)"/>
+        <text x="${x}" y="${H - padB + 18}" text-anchor="middle" font-size="11" fill="var(--text-muted)" font-family="var(--font-body)">$${realVal < 1 ? realVal.toFixed(2) : realVal.toFixed(1)}</text>
+      `;
+    }
+
+    all.forEach(pt => {
+      const isTop = top10Ids.has(pt.card.id);
+      const cx = xMap(pt.cost1k);
+      const cy = yMap(pt.q);
+      const color = isTop ? "var(--accent)" : "var(--slate-300)";
+      const r = isTop ? 6 : 4;
+      const opacity = isTop ? "1" : "0.5";
+      html += `
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="${color}" opacity="${opacity}">
+          <title>${esc(pt.card.name)}&#10;Качество: ${pt.q}&#10;$/1000 задач: $${pt.cost1k.toFixed(3)}</title>
+        </circle>
+      `;
+    });
+
+    svg.innerHTML = html;
+  }
+
+  // Media section
+  const mediaKeys = {
+    "artificial_analysis/media/text-to-image": "Картинки",
+    "artificial_analysis/media/image-editing": "Редактирование",
+    "artificial_analysis/media/text-to-speech": "Озвучка",
+    "artificial_analysis/media/text-to-video": "Видео",
+    "open_asr/avg_wer": "Распознавание речи",
+    "stt_prices": "Цены STT за минуту"
+  };
+
+  const tabsBar = document.getElementById("media-tabs");
+  const mediaList = document.getElementById("media-list");
+  let activeTab = "artificial_analysis/media/text-to-image";
+
+  Object.keys(mediaKeys).forEach(k => {
+    const btn = document.createElement("button");
+    btn.className = "tab-btn" + (k === activeTab ? " active" : "");
+    btn.textContent = mediaKeys[k];
+    btn.onclick = () => {
+      activeTab = k;
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.textContent === mediaKeys[k]));
+      renderMedia();
+    };
+    tabsBar.appendChild(btn);
+  });
+
+  function renderMedia() {
+    mediaList.innerHTML = "";
+    if (activeTab === "stt_prices") {
+      const items = (DATA.stt_prices || []).slice(0, 12);
+      items.forEach(it => {
+        const div = document.createElement("div");
+        div.className = "media-item";
+        div.innerHTML = `
+          <div>
+            <div class="m-name" title="${esc(it.model)}">${esc(it.model)}</div>
+            <div class="m-org">${esc(it.offer_id)}</div>
+          </div>
+          <div class="m-score">$${(it.per_minute || 0).toFixed(5)}/мин</div>
+        `;
+        mediaList.appendChild(div);
+      });
+      return;
+    }
+
+    const items = ((DATA.media && DATA.media[activeTab]) || []).slice(0, 12);
+    const isWer = activeTab === "open_asr/avg_wer";
+    items.forEach(it => {
+      const div = document.createElement("div");
+      div.className = "media-item";
+      const scoreStr = isWer ? it.score + "% WER" : it.score;
+      div.innerHTML = `
+        <div>
+          <div class="m-name" title="${esc(it.model_name || it.model_key)}">${esc(it.model_name || it.model_key)}</div>
+          <div class="m-org">${esc(it.organization || "")}</div>
+        </div>
+        <div class="m-score">${scoreStr}</div>
+      `;
+      mediaList.appendChild(div);
+    });
+  }
+
+  // Attribution
+  const attrBox = document.getElementById("sources-attribution");
+  if (DATA.attribution && DATA.attribution.length) {
+    attrBox.innerHTML = DATA.attribution.map(a => `<div>• ${esc(a)}</div>`).join("");
+  }
+
+  renderMedia();
+  applyPreset("optimal");
+})();
+</script>

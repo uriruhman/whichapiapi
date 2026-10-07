@@ -1,0 +1,23 @@
+# 5 deterministic, cheap, low-variance cases. Point is repeatability: a stable model answers these the same
+# way every time, so a drop in pass rate/score/latency signals a channel silently swapping or degrading the
+# model behind a model name, not just an unlucky sample.
+- description: arithmetic
+  vars:
+    question: "Compute 47 * 19. Reply with only the number, nothing else."
+    expected: "893"
+- description: exact word
+  vars:
+    question: "Reply with exactly the single word PONG — all uppercase, no punctuation, nothing else."
+    expected: "PONG"
+- description: count letters
+  vars:
+    question: 'Count the letters in the word "strawberry". Reply with only the digits, nothing else.'
+    expected: "10"
+- description: json echo
+  vars:
+    question: 'Reply with exactly this JSON text and nothing else: {"status": "ok"}'
+    expected: '{"status": "ok"}'
+- description: csv list
+  vars:
+    question: 'List the integers 1 to 5 separated by commas, nothing else, e.g. "1,2,3,4,5".'
+    expected: "1,2,3,4,5"

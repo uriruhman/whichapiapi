@@ -1,0 +1,38 @@
+# Phase 2 canary suite: 5 cheap, deterministic cases, run periodically via `whichapiapi eval canary run` to
+# catch a channel silently substituting or degrading the model behind a model name. No LLM judge (judge
+# variance would obscure a real signal); output is short, so real spend per run is well under a cent.
+description: "canary · silent model substitution / degradation check"
+
+prompts:
+  - file://prompt.json
+
+providers:
+  - id: reseller:gpt-6-luna
+    label: gpt-6-luna
+    config: {max_tokens: 50}
+    x-whichapiapi: {current: true}
+  - id: reseller:deepseek-v4.1-flash
+    label: deepseek-v4.1-flash
+    config: {max_tokens: 50}
+
+defaultTest:
+  assert:
+    - {type: python, value: "file://checks.py:matches", metric: matches}
+
+tests: file://tests.yaml
+
+x-whichapiapi:
+  capability: llm.chat
+  contains_pii: false
+  channels:
+    reseller:
+      base_url: https://api.reseller.example/v1
+      key_env: RESELLER_API_KEY
+      balance: newapi
+      pricing: newapi
+      min_balance: 0.30 # the key is shared with the live channel — never drain it
+  budget:
+    run_usd: 0.05
+    chars_per_token: 3.0
+    default_output_tokens: 50
+  min_pass_rate: 0.5

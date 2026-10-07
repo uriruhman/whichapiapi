@@ -1,0 +1,24 @@
+description: toy suite
+prompts:
+  - file://prompt.json
+providers:
+  - id: 'mock:const:{"answer": "Paris"}'
+    label: good
+    x-whichapiapi: {current: true, price: {input_per_1m: 1.0, output_per_1m: 2.0}}
+  - id: mock:const:London
+    label: bad
+    x-whichapiapi: {price: {input_per_1m: 0.1, output_per_1m: 0.2}}
+  - id: mock:fail
+    label: broken
+defaultTest:
+  assert:
+    - type: contains-json
+      metric: json
+    - type: llm-rubric
+      value: "Answer must name the capital of {{country}}"
+      metric: rubric
+tests: file://tests.yaml
+x-whichapiapi:
+  judge:
+    provider: mock:judge
+  budget: {run_usd: 1.0}

@@ -1,0 +1,11 @@
+# `audio` is a placeholder path string, NOT a `file://` ref (those get eagerly read as text by the suite
+# loader) — the real STT transports (`suite.live.yaml`) treat the rendered prompt content as
+# an audio file/URL to send to the provider instead of literal text.
+- description: short sentence
+  vars:
+    audio: ".cache/audio/sentence1.wav"
+    reference: the cat sat on the mat
+- description: numbers
+  vars:
+    audio: ".cache/audio/sentence2.wav"
+    reference: call me back at nine four seven two one one three

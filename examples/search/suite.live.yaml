@@ -1,0 +1,53 @@
+# REAL search.web run against Tavily (needs TAVILY_API_KEY; free tier = 1000 credits/month, no card).
+# Cost: basic = 1 credit, advanced = 2 credits; list price at pay-as-you-go $0.008/credit (free tier: $0 real).
+#   set -a; . ~/.config/whichapiapi/env; set +a
+#   uv run whichapiapi eval run examples/search/suite.live.yaml -y
+description: "search.web · Tavily basic vs advanced, keyword check + LLM-judged relevance"
+
+prompts:
+  - file://prompt.json
+
+providers:
+  - id: tavily:basic
+    label: tavily-basic
+    config: {max_results: 5}
+    x-whichapiapi: {current: true, price: {per_request: 0.008}}
+  - id: tavily:advanced
+    label: tavily-advanced
+    config: {max_results: 5}
+    x-whichapiapi: {price: {per_request: 0.016}}
+
+defaultTest:
+  assert:
+    - {type: icontains, value: "{{expected_keyword}}", metric: keyword, weight: 0.3}
+    - type: llm-rubric
+      metric: relevance
+      weight: 0.7
+      value: |
+        The output is a ranked list of web search results for the query "{{query}}".
+        Score 1.0 if the top results directly answer or are clearly about the query and are current/authoritative;
+        0.5 if only some are relevant or they are generic/stale; 0 if they are off-topic or spam.
+        Judge relevance only, not formatting.
+
+tests: file://tests.yaml
+
+x-whichapiapi:
+  capability: search.web
+  judge:
+    provider:
+      id: reseller:gpt-6-luna
+      label: judge gpt-6-luna
+  contains_pii: false
+  budget: {run_usd: 0.20}
+  min_pass_rate: 0.5
+  channels:
+    reseller:
+      base_url: https://api.reseller.example/v1
+      key_env: RESELLER_API_KEY
+      balance: newapi
+      min_balance: 0.30
+    tavily:
+      base_url: https://api.tavily.com
+      key_env: TAVILY_API_KEY
+      protocol: tavily
+      timeout_s: 60

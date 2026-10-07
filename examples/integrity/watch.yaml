@@ -1,0 +1,19 @@
+# Model-integrity watch list: `whichapiapi integrity run examples/integrity/watch.yaml`.
+# Each model gets ~20 short calls per run (see src/whichapiapi/evaluator/integrity.py, docs/INTEGRITY.md).
+# family: the tokenizer/vendor the name claims (openai, claude, gemini, deepseek, qwen, glm, mimo, kimi).
+# sibling: the cheaper model of the same vendor it could be silently swapped for (fingerprint comparison).
+budget_per_model: 0.01      # refused when models × this would cross WHICHAPIAPI_BUDGET_TOTAL
+samples: 4                  # random-number / random-animal samples per model
+concurrency: 6
+channels:
+  reseller:
+    base_url: https://api.reseller.example/v1
+    key_env: RESELLER_API_KEY
+    log: newapi               # read the exact cost of every probe from the reseller's call log
+models:
+  - {channel: reseller, model: gpt-6.1-sol, family: openai, sibling: gpt-6-luna}
+  - {channel: reseller, model: gpt-6-sol, family: openai, sibling: gpt-6-luna}
+  - {channel: reseller, model: claude-opus-5-5, family: claude, sibling: claude-haiku-4-5-20251001}
+  - {channel: reseller, model: claude-sonnet-5-5, family: claude, sibling: claude-haiku-4-5-20251001}
+  - {channel: reseller, model: gpt-6-luna, family: openai}
+  - {channel: reseller, model: deepseek-v4.1-flash, family: deepseek}

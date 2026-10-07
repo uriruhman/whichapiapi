@@ -1,0 +1,46 @@
+{
+ "data": {
+  "currency_type": "USD",
+  "min_topup": 1,
+  "price": 1,
+  "quota_per_unit": 500000,
+  "pay_methods": [
+   {
+    "color": "#1890FF",
+    "id": "1",
+    "max_amount": "500",
+    "name": "Credit Card",
+    "type": "sunrate"
+   },
+   {
+    "color": "#2AAE67",
+    "id": "3",
+    "max_amount": "2000",
+    "name": "WeChat Pay",
+    "type": "wxpay"
+   },
+   {
+    "color": "#06B4FD",
+    "id": "5",
+    "max_amount": "40000",
+    "name": "Alipay2",
+    "type": "antom"
+   },
+   {
+    "color": "#06B4FD",
+    "id": "4",
+    "max_amount": "2000",
+    "name": "Alipay3",
+    "type": "alipay"
+   },
+   {
+    "color": "#2775CA",
+    "id": "2",
+    "name": "Crypto Pay",
+    "type": "stablepay"
+   }
+  ],
+  "enable_stripe_topup": true
+ },
+ "success": true
+}
